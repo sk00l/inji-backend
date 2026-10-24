@@ -2,6 +2,9 @@ package io.mosip.mimoto.dto.mimoto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Map;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -28,4 +31,15 @@ public class VCCredentialRequest {
     private VCCredentialDefinition credentialDefinition;
 
     private String vct;
+
+    @JsonIgnore
+    private String credentialConfigurationId;
+
+    public Object toRequestBody() {
+        if (credentialConfigurationId == null) {
+            return this;
+        }
+        return Map.of("credential_configuration_id", credentialConfigurationId,
+                "proofs", Map.of("jwt", List.of(proof.getJwt())));
+    }
 }

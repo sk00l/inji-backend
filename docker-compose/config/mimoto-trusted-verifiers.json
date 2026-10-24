@@ -1,6 +1,20 @@
 {
   "verifiers": [
     {
+      "client_id": "university-library",
+      "redirect_uris": ["http://localhost:3000/"],
+      "response_uris": ["https://verifier.localhost/university/presentations"],
+      "jwks_uri": "https://verifier.localhost/.well-known/jwks.json",
+      "allow_unsigned_request": false
+    },
+    {
+      "client_id": "mock-client",
+      "redirect_uris": ["http://localhost:3000/verifier/callback"],
+      "response_uris": ["https://verifier.localhost/verifier/vp-response"],
+      "jwks_uri": "https://verifier.localhost/.well-known/jwks.json",
+      "allow_unsigned_request": false
+    },
+    {
       "client_id": "https://injiverify.collab.mosip.net",
       "redirect_uris": [
         "https://injiverify.collab.mosip.net/"

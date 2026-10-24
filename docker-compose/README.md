@@ -1,5 +1,10 @@
 ## Overview
 
+For a Mac running the native Inji Wallet app, use
+[the mobile handoff guide](../MAC_MOBILE_HANDOFF.md) and `mobile-stack.sh`.
+That profile builds the backend without Inji Web and includes an isolated local
+issuer, HTTPS gateway, and library request-QR demonstration.
+
 This is the docker-compose setup to run mimoto which act as BFF for Inji mobile and backend for Inji web. This is not for production use.
 
 ## What is in the docker-compose folder?

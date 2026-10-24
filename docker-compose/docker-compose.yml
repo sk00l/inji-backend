@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   minio:
@@ -40,7 +38,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
 
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:18-bookworm'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

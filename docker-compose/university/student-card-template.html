@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>University Student ID - Demo</title></head>
+<body style="font-family: Helvetica, Arial, sans-serif; color: #142f47; padding: 26px;">
+<div style="font-size: 11px; letter-spacing: 2px; color: #7b6b4a; margin-bottom: 16px;">FICTIONAL UNIVERSITY | DEMONSTRATION CREDENTIAL</div>
+<div style="border: 2px solid #142f47;">
+<table style="width:100%; border-collapse: collapse;"><tr style="background-color: #142f47; color: white;"><td style="padding: 28px;"><div style="font-size: 13px; letter-spacing: 2px; color: #dfb769;">HIMALAYA UNIVERSITY</div><div style="font-size: 28px; font-weight: bold; margin-top: 8px;">Student Identification</div></td><td style="padding: 20px; text-align: right; width: 90px;"><div style="border: 2px solid #dfb769; color: #dfb769; font-size: 30px; padding: 12px;">HU</div></td></tr></table>
+<div style="padding: 28px;">
+<table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+#set($column = 0)
+#foreach($entry in $rowProperties.entrySet())
+  #foreach($field in $entry.value.entrySet())
+  #if($column % 2 == 0)<tr>#end
+  <td style="width:50%; vertical-align:top; padding:0 12px 18px 0;"><div style="font-size: 10px; color: #63717c;">$field.key</div><div style="font-size: 17px; font-weight: bold;">$field.value</div></td>
+  #set($column = $column + 1)
+  #if($column % 2 == 0)</tr>#end
+  #end
+#end
+#if($column % 2 != 0)<td></td></tr>#end
+</table>
+<div style="border-top: 1px solid #dfb769; padding-top: 15px; margin-top: 18px; color: #7b6b4a; font-size: 11px;">Digitally signed by the local demo registrar. This is not a real university identity document.</div>
+</div></div>
+<table style="width:100%; margin-top:20px;"><tr><td style="font-size: 12px; color: #63717c; padding-right: 20px;">Keep this credential in your Inji wallet. To try campus library access, open http://localhost:3000 and present the student ID with your consent.</td><td style="width:155px; text-align:right;"><img style="width:150px; height:150px;" src="data:image/png;base64,$qrCodeImage" alt="Student credential QR code"/></td></tr></table>
+</body></html>

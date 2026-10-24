@@ -33,4 +33,11 @@ build/
 .vscode/
 *.code-workspace
 .DS_Store
+docker-compose/certs/
+docker-compose/local-output/
+docker-compose/local/__pycache__/
+docker-compose/university/node_modules/
+docker-compose/mobile-runtime/
+.venv/
+.env.local
 data

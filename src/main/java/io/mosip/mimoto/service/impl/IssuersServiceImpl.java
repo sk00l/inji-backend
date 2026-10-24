@@ -100,13 +100,15 @@ public class IssuersServiceImpl implements IssuersService {
         }
         AuthorizationServerWellKnownResponse authorizationServerWellKnownResponse = issuersConfigUtil.getAuthServerWellknown(credentialIssuerWellKnownResponse.getAuthorizationServers().getFirst());
 
-        return new CredentialIssuerConfiguration(
+        CredentialIssuerConfiguration configuration = new CredentialIssuerConfiguration(
                 credentialIssuerWellKnownResponse.getCredentialIssuer(),
                 credentialIssuerWellKnownResponse.getAuthorizationServers(),
                 credentialIssuerWellKnownResponse.getCredentialEndPoint(),
                 credentialIssuerWellKnownResponse.getCredentialConfigurationsSupported(),
                 authorizationServerWellKnownResponse
         );
+        configuration.setNonceEndpoint(credentialIssuerWellKnownResponse.getNonceEndpoint());
+        return configuration;
     }
 
     @Override

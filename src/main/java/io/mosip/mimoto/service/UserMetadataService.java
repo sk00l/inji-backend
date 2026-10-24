@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -74,7 +75,7 @@ public class UserMetadataService {
             throws EncryptionException {
         String current = getter.get();
         setter.accept(encryptionService.encrypt(newValue));
-        return !current.equals(newValue);
+        return !Objects.equals(current, newValue);
     }
 
     private String createUser(String providerSubjectId, String identityProvider, String displayName,

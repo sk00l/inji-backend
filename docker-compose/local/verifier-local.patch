@@ -1,0 +1,45 @@
+diff --git a/openid4vp-service/app.js b/openid4vp-service/app.js
+index e8a3541..e192cf0 100644
+--- a/openid4vp-service/app.js
++++ b/openid4vp-service/app.js
+@@ -240,7 +240,7 @@ app.post('/verifier/vp-response', (req, res) => {
+     console.log("asking for a redirect...")
+ 
+     const response = {
+-        redirect_uri: `${baseUrl}/verifier/callback#response_code=${responseCode}`,
++        redirect_uri: `${process.env.BROWSER_URL || baseUrl}/verifier/callback#response_code=${responseCode}`,
+         message: `Verifiable presentation is not right`,
+     };
+     console.log("Response to be sent:", response);
+@@ -327,4 +327,4 @@ const generateQrCodeResponse = async (inputData, res) => {
+         console.error('Error generating QR code:', error);
+         res.status(500).send('Internal Server Error');
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/openid4vp-service/constants.js b/openid4vp-service/constants.js
+index 322b630..1292ea4 100644
+--- a/openid4vp-service/constants.js
++++ b/openid4vp-service/constants.js
+@@ -8,7 +8,10 @@ const jwkSet = {
+         {
+             "kty": "OKP",
+             "crv": "Ed25519",
+-            "x": "-Fy3lMapzR3wpaYNCFq29GDEn_NoR3pBsc511q1Cxqw",
++            "x": crypto.createPublicKey(crypto.createPrivateKey({
++                key: Buffer.concat([Buffer.from('302e020100300506032b657004220420', 'hex'), Buffer.from(ed25519PrivateKey, 'base64')]),
++                format: 'der', type: 'pkcs8'
++            })).export({format: 'jwk'}).x,
+             "alg": "EdDSA",
+             "kid": publicKeyId,
+             "use": "sig"
+@@ -16,7 +19,7 @@ const jwkSet = {
+     ]
+ }
+ //update this baseurl with the localtunnel url
+-const baseUrl = "http://localhost:3000"
++const baseUrl = process.env.BASE_URL || "http://localhost:3000"
+ const requestUri = `${baseUrl}/verifier/get-auth-request-obj`
+ const responseUri = `${baseUrl}/verifier/vp-response`
+ const presentationDefinitionUri  = `${baseUrl}/verifier/presentation_definition_uri`

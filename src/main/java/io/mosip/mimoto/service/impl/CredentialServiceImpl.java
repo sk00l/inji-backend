@@ -75,6 +75,7 @@ public class CredentialServiceImpl implements CredentialService {
                 credentialIssuerConfiguration.getAuthorizationServers(),
                 credentialIssuerConfiguration.getCredentialEndPoint(),
                 credentialIssuerConfiguration.getCredentialConfigurationsSupported());
+        credentialIssuerWellKnownResponse.setNonceEndpoint(credentialIssuerConfiguration.getNonceEndpoint());
         CredentialsSupportedResponse credentialsSupportedResponse = credentialIssuerWellKnownResponse.getCredentialConfigurationsSupported().get(credentialConfigurationId);
         VCCredentialRequest vcCredentialRequest = credentialRequestService.buildRequest(issuerDTO, credentialConfigurationId, credentialIssuerWellKnownResponse, response.getC_nonce(), null, null, false);
 
@@ -92,7 +93,7 @@ public class CredentialServiceImpl implements CredentialService {
     @Override
     public VCCredentialResponse downloadCredential(String credentialEndpoint, VCCredentialRequest vcCredentialRequest, String accessToken) throws InvalidCredentialResourceException {
         VerifiableCredentialResponse response = restApiClient.postApi(credentialEndpoint, MediaType.APPLICATION_JSON,
-                vcCredentialRequest, VerifiableCredentialResponse.class, accessToken);
+                vcCredentialRequest.toRequestBody(), VerifiableCredentialResponse.class, accessToken);
         if (response == null)
             throw new InvalidCredentialResourceException("VC Credential Issue API not accessible");
         log.debug("VC Credential Response received");

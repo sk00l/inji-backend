@@ -41,6 +41,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = loadFromProvider(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        return enrichUser(oAuth2User, registrationId);
+    }
+
+    public OAuth2User enrichUser(OAuth2User oAuth2User, String registrationId) {
         ProviderDataConfig provider = getProviderConfig(registrationId);
 
         Map<String, Object> attributes = extractAttributes(oAuth2User, provider);

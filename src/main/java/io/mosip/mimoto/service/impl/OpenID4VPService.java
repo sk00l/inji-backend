@@ -33,7 +33,7 @@ public class OpenID4VPService {
 
     public OpenID4VP create(String presentationId) {
         WalletMetadata walletMetadata = new WalletMetadata();
-        walletMetadata.setVpFormatsSupported(Map.of(VPFormatType.LDP_VC, new VPFormatSupported(List.of("EEd25519Signature2020"))));
+        walletMetadata.setVpFormatsSupported(Map.of(VPFormatType.LDP_VC, new VPFormatSupported(List.of("Ed25519Signature2020"))));
 
         return new OpenID4VP(
                 presentationId,

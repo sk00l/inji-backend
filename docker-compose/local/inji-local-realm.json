@@ -1,0 +1,95 @@
+{
+  "realm": "inji-local",
+  "enabled": true,
+  "displayName": "Inji local development",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "clients": [
+    {
+      "clientId": "inji-web",
+      "name": "Inji Web local development",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "local-web-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3004/v1/mimoto/oauth2/callback/local"
+      ],
+      "webOrigins": [
+        "http://localhost:3004"
+      ],
+      "defaultClientScopes": [
+        "profile",
+        "email"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "nisha",
+      "enabled": true,
+      "email": "nisha@example.test",
+      "emailVerified": true,
+      "firstName": "Nisha",
+      "lastName": "Gurung",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "nisha-local-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "student",
+      "enabled": true,
+      "email": "student@example.test",
+      "emailVerified": true,
+      "firstName": "Aarav",
+      "lastName": "Sharma",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "student-local-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "tour",
+      "enabled": true,
+      "email": "tour@example.test",
+      "emailVerified": true,
+      "firstName": "Feature",
+      "lastName": "Tour",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tour-local-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "demo",
+      "enabled": true,
+      "email": "demo@example.test",
+      "emailVerified": true,
+      "firstName": "Local",
+      "lastName": "Demo",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo-local-password",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

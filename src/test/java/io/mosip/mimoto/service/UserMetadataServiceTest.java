@@ -57,6 +57,21 @@ public class UserMetadataServiceTest {
     }
 
     @Test
+    public void shouldAllowRepeatLoginWithoutAProfilePicture() throws DecryptionException, EncryptionException {
+        userMetadata.setProfilePictureUrl(null);
+        when(userMetadataRepository.findByProviderSubjectIdAndIdentityProvider(providerSubjectId, identityProvider))
+                .thenReturn(Optional.of(userMetadata));
+        when(encryptionService.decrypt("encryptedDisplayName")).thenReturn(displayName);
+        when(encryptionService.decrypt("encryptedEmail")).thenReturn(email);
+        when(encryptionService.encrypt(displayName)).thenReturn("encryptedDisplayName");
+        when(encryptionService.encrypt(email)).thenReturn("encryptedEmail");
+
+        assertEquals(userId, userMetadataService.updateOrCreateUserMetadata(
+                providerSubjectId, identityProvider, displayName, null, email));
+        verify(userMetadataRepository, never()).save(any());
+    }
+
+    @Test
     public void shouldUpdateUserMetadataForSameProviderSubjectIdAndSameIdentityProviderButWithDifferentDisplayName() throws DecryptionException, EncryptionException {
         String updatedDisplayName = "Name 124";
         String encryptedUpdatedDisplayName = "encryptedUpdatedDisplayName";

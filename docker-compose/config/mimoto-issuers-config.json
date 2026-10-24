@@ -1,6 +1,16 @@
 {
   "issuers": [
     {
+      "issuer_id": "University",
+      "display": [{"name": "Himalaya University (Demo)", "title": "University Student ID", "description": "Get your fictional university student ID", "language": "en",
+        "logo": {"url": "http://university.localhost:3006/static/seal.svg", "alt_text": "Himalaya University demo seal"}}],
+      "protocol": "OpenId4VCI", "client_id": "university-wallet", "client_alias": "university-wallet-client",
+      "token_endpoint": "http://localhost:8099/v1/mimoto/get-token/University", "qr_code_type": "EmbeddedVC",
+      "credential_issuer_host": "https://university.localhost", "wellknown_endpoint": "https://university.localhost/.well-known/openid-credential-issuer",
+      "redirect_uri": "http://localhost:3004/redirect", "authorization_audience": "https://university.localhost/oauth/token",
+      "proxy_token_endpoint": "https://university.localhost/oauth/token", "credential_issuer": "Himalaya University (Demo)", "enabled": "true"
+    },
+    {
       "issuer_id": "Mock",
       "display": [
         {
@@ -17,11 +27,11 @@
       "protocol": "OpenId4VCI",
       "client_id": "wallet-demo",
       "client_alias": "wallet-demo-client",
-      "token_endpoint": "https://localhost:8099/v1/mimoto/get-token/Mock",
+      "token_endpoint": "http://localhost:8099/v1/mimoto/get-token/Mock",
       "qr_code_type": "OnlineSharing",
       "credential_issuer_host": "https://injicertify-mock.collab.mosip.net",
-      "wellknown_endpoint": "https://injicertify-mock.collab.mosip.net/v1/certify/issuance/.well-known/openid-credential-issuer",
-      "redirect_uri": "io.mosip.residentapp.inji://oauthredirect",
+      "wellknown_endpoint": "https://injicertify-mock.collab.mosip.net/.well-known/openid-credential-issuer",
+      "redirect_uri": "http://localhost:3004/redirect",
       "authorization_audience": "https://esignet-mock.collab.mosip.net/v1/esignet/oauth/v2/token",
       "proxy_token_endpoint": "https://esignet-mock.collab.mosip.net/v1/esignet/oauth/v2/token",
       "credential_issuer": "Mock",

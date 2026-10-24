@@ -10,6 +10,16 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 public class CredentialIssuerConfiguration {
+    private String nonceEndpoint;
+
+    public CredentialIssuerConfiguration(String issuer, List<String> servers, String endpoint,
+            Map<String, CredentialsSupportedResponse> configurations, AuthorizationServerWellKnownResponse authServer) {
+        this.credentialIssuer = issuer;
+        this.authorizationServers = servers;
+        this.credentialEndPoint = endpoint;
+        this.credentialConfigurationsSupported = configurations;
+        this.authorizationServerWellKnownResponse = authServer;
+    }
     private String credentialIssuer;
 
     private List<String> authorizationServers;

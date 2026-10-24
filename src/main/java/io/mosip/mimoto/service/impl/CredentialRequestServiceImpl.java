@@ -11,6 +11,9 @@ import io.mosip.mimoto.util.SigningKeyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import io.mosip.mimoto.util.RestApiClient;
 
 import java.security.KeyPair;
 import java.util.*;
@@ -19,6 +22,11 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class CredentialRequestServiceImpl implements CredentialRequestService {
+    @Value("${mosip.inji.openid4vci.final-issuers:}")
+    private String finalIssuers = "";
+
+    @Autowired
+    private RestApiClient restApiClient;
 
     @Value("${signing.algorithms.priority.order:ED25519,ES256K,ES256,RS256}")
     private String signingAlgorithmsPriorityOrder;
@@ -49,6 +57,17 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
                                             boolean isLoginFlow) throws Exception {
         CredentialsSupportedResponse credentialsSupportedResponse = wellKnownResponse.getCredentialConfigurationsSupported().get(credentialConfigurationId);
 
+        boolean finalProtocol = Arrays.stream(finalIssuers.split(","))
+                .map(String::trim).anyMatch(issuerDTO.getIssuer_id()::equals);
+        if (finalProtocol && wellKnownResponse.getNonceEndpoint() != null) {
+            Map<?, ?> nonceResponse = restApiClient.postApi(wellKnownResponse.getNonceEndpoint(),
+                    MediaType.APPLICATION_JSON, Map.of(), Map.class, false);
+            if (nonceResponse == null || !(nonceResponse.get("c_nonce") instanceof String nonce) || nonce.isBlank()) {
+                throw new IllegalStateException("Issuer did not return a credential proof nonce");
+            }
+            cNonce = nonce;
+        }
+
         SigningAlgorithm signingAlgorithm = resolveAlgorithm(credentialsSupportedResponse);
 
         String jwt;
@@ -71,7 +90,11 @@ public class CredentialRequestServiceImpl implements CredentialRequestService {
                             .jwt(jwt)
                             .build();
                     CredentialFormatHandler handler = credentialFormatHandlerFactory.getHandler(format);
-                    return handler.buildCredentialRequest(proof, credentialsSupportedResponse);
+                    VCCredentialRequest request = handler.buildCredentialRequest(proof, credentialsSupportedResponse);
+                    if (finalProtocol) {
+                        request.setCredentialConfigurationId(credentialConfigurationId);
+                    }
+                    return request;
                 })
                 .orElseThrow(() -> new IllegalArgumentException("No proof type available"));
     }

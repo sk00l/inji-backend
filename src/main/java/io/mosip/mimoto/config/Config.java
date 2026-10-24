@@ -17,6 +17,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -145,7 +148,16 @@ public class Config {
                 .loginPage(injiWebUrl + "/")
                 .authorizationEndpoint(authorization -> authorization.baseUri("/oauth2/authorize"))
                 .redirectionEndpoint(redirect -> redirect.baseUri("/oauth2/callback/*"))
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                        .oidcUserService(request -> {
+                            var oidcUser = new OidcUserService().loadUser(request);
+                            var user = customOAuth2UserService.enrichUser(oidcUser,
+                                    request.getClientRegistration().getRegistrationId());
+                            return new DefaultOidcUser(
+                                    user.getAuthorities(), request.getIdToken(),
+                                    new OidcUserInfo(user.getAttributes()), "sub");
+                        }))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
         );

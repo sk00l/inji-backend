@@ -1,6 +1,7 @@
 package io.mosip.mimoto.dto.mimoto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,4 +59,16 @@ public class CredentialsSupportedResponse {
 
     @Schema(description = "Identify the type or schema of the claims included")
     private String vct;
+
+    // Newer issuers nest display metadata; retain the flattened response used by
+    // existing Mimoto clients, while continuing to validate the display fields.
+    @JsonProperty("credential_metadata")
+    public void readCredentialMetadata(CredentialMetadata metadata) {
+        if ((display == null || display.isEmpty()) && metadata != null) {
+            display = metadata.display();
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record CredentialMetadata(List<CredentialSupportedDisplayResponse> display) {}
 }

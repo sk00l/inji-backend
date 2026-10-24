@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inji local sharing demo</title>
+<style>body{font:18px/1.6 system-ui;max-width:760px;margin:65px auto;padding:24px;color:#172033;background:#f7f9fc}main{background:white;padding:36px;border:1px solid #dde3ee;border-radius:18px}a,button{display:inline-block;background:#183b87;color:white;padding:12px 20px;border:0;border-radius:9px;text-decoration:none;font:inherit;cursor:pointer}small{color:#536079}#result{white-space:pre-wrap;padding:15px;background:#eef3ff;border-radius:8px}</style></head>
+<body><main><small>INJI WEB · LOCAL FEATURE TOUR</small><h1>Try credential sharing</h1>
+<p>This requester asks your wallet for a sandbox identity credential. Review its identity, select a credential, and approve or decline sharing.</p>
+<p>First sign in to <a href="http://localhost:3004" target="_blank" rel="noopener">your wallet</a> using <b>tour</b> / <b>tour-local-password</b>, then unlock with PIN <b>123456</b>.</p>
+<button id="start">Request a demo credential</button><p id="status"></p><div id="result">Waiting for a presentation.</div>
+<p><small>This is the official Inji mock receiver configured locally. It exercises the request, trust, consent, selection, and signed presentation flow. It acknowledges receipt; it does not independently validate the received presentation.</small></p>
+</main><script>
+document.querySelector('#start').onclick=async()=>{
+ const walletTab=window.open('about:blank','inji-wallet-sharing');
+ try{
+  document.querySelector('#status').textContent='Creating a signed request…';
+  const r=await fetch('/verifier/pre-registered/by_reference?draft=draft-21');
+  if(!r.ok)throw Error('Could not create the request');
+  const data=await r.json();const url=new URL('http://localhost:3004/user/authorize');
+  for(const [key,value]of Object.entries(data.inputData))url.searchParams.set(key,value);
+  document.querySelector('#status').textContent='Complete the sharing steps in the wallet tab, then return here.';
+  if(walletTab)walletTab.location.href=url.toString();else window.location.href=url.toString();
+ }catch(e){document.querySelector('#status').textContent=e.message}
+};
+setInterval(async()=>{
+ try{const r=await fetch('/verifier/vp-result');const x=await r.json();
+ if(x){document.querySelector('#result').textContent=x.error?'Request declined: '+x.error:'Presentation received. The wallet completed the sharing flow.';}}
+ catch(e){}
+},2000);
+</script></body></html>

@@ -1,0 +1,10 @@
+.git
+target
+data
+.venv
+.env.local
+**/node_modules
+**/__pycache__
+docker-compose/certs
+docker-compose/mobile-runtime
+docker-compose/local-output

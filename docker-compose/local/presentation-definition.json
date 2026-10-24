@@ -1,0 +1,13 @@
+{
+  "id": "local-identity-tour",
+  "purpose": "Demonstrate sharing a sandbox identity credential with a local requester.",
+  "input_descriptors": [
+    {
+      "id": "mock-identity",
+      "name": "Demo identity credential",
+      "purpose": "Request the full name from a sandbox identity credential.",
+      "format": {"ldp_vc": {"proof_type": ["Ed25519Signature2020", "RsaSignature2018"]}},
+      "constraints": {"fields": [{"path": ["$.credentialSubject.fullName"]}]}
+    }
+  ]
+}

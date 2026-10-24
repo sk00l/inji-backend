@@ -1,0 +1,14 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
+  <mirrors>
+    <mirror>
+      <id>local-central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <mirrorOf>central,ossrh,ossrh-central</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>local-google</id>
+      <url>https://dl.google.com/dl/android/maven2</url>
+      <mirrorOf>google-maven</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>

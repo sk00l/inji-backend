@@ -1,0 +1,41 @@
+diff --git a/inji-web/src/components/Login/Login.tsx b/inji-web/src/components/Login/Login.tsx
+index 286decf..d7c4f7a 100644
+--- a/inji-web/src/components/Login/Login.tsx
++++ b/inji-web/src/components/Login/Login.tsx
+@@ -18,7 +18,8 @@ export const Login: React.FC<LoginProps> = ({ isOpenIdVpLogin = false }) => {
+   const handleGoogleLogin = () => {
+       // Use replace() instead of href to prevent adding Google IdP to browser history
+       // This way, pressing back won't navigate to Google's OAuth page
+-      window.location.replace(`${window._env_.MIMOTO_URL}/oauth2/authorize/google`);
++      const provider = window._env_.LOGIN_PROVIDER || "google";
++      window.location.replace(`${window._env_.MIMOTO_URL}/oauth2/authorize/${encodeURIComponent(provider)}`);
+   };
+ 
+   const handleGuestLogin = () => {
+@@ -56,7 +57,12 @@ export const Login: React.FC<LoginProps> = ({ isOpenIdVpLogin = false }) => {
+           {t(isOpenIdVpLogin ? "Login.loginNoteOVP" : "Login.loginNote")}
+         </div >
+ 
+-        <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} loadingText={t("Login.loggingIn")} text={t("Login.loginGoogle")}/>
++        {window._env_.LOGIN_PROVIDER && window._env_.LOGIN_PROVIDER !== "google" ? (
++          <BorderedButton testId="local-login-button" onClick={handleGoogleLogin}
++            title={window._env_.LOGIN_LABEL || "Continue with local account"} fullWidth />
++        ) : (
++          <GoogleSignInButton handleGoogleLogin={handleGoogleLogin} loadingText={t("Login.loggingIn")} text={t("Login.loginGoogle")}/>
++        )}
+ 
+         {!isOpenIdVpLogin && (
+           <>
+diff --git a/inji-web/src/types/env.d.ts b/inji-web/src/types/env.d.ts
+index 777c1e9..4cda718 100644
+--- a/inji-web/src/types/env.d.ts
++++ b/inji-web/src/types/env.d.ts
+@@ -10,6 +10,8 @@ declare global {
+             DEFAULT_FONT_URL: string;
+             MIMOTO_URL: string;
+             IGNORED_ISSUER_IDS: string;
++            LOGIN_PROVIDER?: string;
++            LOGIN_LABEL?: string;
+         }
+     }
+ }

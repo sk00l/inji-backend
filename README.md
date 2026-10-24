@@ -3,6 +3,13 @@
 
 # mimoto
 
+For the reproducible local backend handoff to a Mac running the native Inji
+Wallet app, start with [MAC_MOBILE_HANDOFF.md](MAC_MOBILE_HANDOFF.md). It includes
+an independent Docker Compose profile, generated local HTTPS configuration,
+mobile issuer settings, a library request-QR demo, and an
+[LLM handoff prompt](FRIEND_LLM_PROMPT.md). The optional Web demonstration is
+documented in [UNIVERSITY_DEMO.md](UNIVERSITY_DEMO.md).
+
 ## Overview
 This repository contains source code for backend service of Inji Mobile and Inji Web. The modules exposes API endpoints.
 

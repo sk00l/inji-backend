@@ -34,6 +34,8 @@ import static org.mockito.Mockito.when;
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class CredentialRequestServiceTest {
     @MockBean
+    private RestApiClient restApiClient;
+    @MockBean
     private ObjectMapper objectMapper;
 
     @Autowired
@@ -64,6 +66,26 @@ public class CredentialRequestServiceTest {
     public void tearDown() {
         if(keyGenerationUtilMockedStatic != null) {
             keyGenerationUtilMockedStatic.close();
+        }
+    }
+
+    @Test
+    public void finalIssuerUsesFreshNonceInSignedProof() throws Exception {
+        var wellknown = new CredentialIssuerWellKnownResponse();
+        wellknown.setCredentialIssuer("https://example-issuer.com");
+        wellknown.setNonceEndpoint("https://example-issuer.com/nonce");
+        wellknown.setCredentialConfigurationsSupported(Map.of("Identity", getCredentialSupportedResponse("Identity")));
+        when(restApiClient.postApi(wellknown.getNonceEndpoint(), org.springframework.http.MediaType.APPLICATION_JSON,
+                Map.of(), Map.class, false)).thenReturn(Map.of("c_nonce", "fresh-nonce"));
+        org.springframework.test.util.ReflectionTestUtils.setField(credentialRequestServiceImpl, "finalIssuers", issuerDTO.getIssuer_id());
+        try {
+            var request = credentialRequestServiceImpl.buildRequest(issuerDTO, "Identity", wellknown,
+                    "old-token-nonce", null, null, false);
+            assertEquals("Identity", request.getCredentialConfigurationId());
+            assertEquals("fresh-nonce", com.nimbusds.jwt.SignedJWT.parse(request.getProof().getJwt())
+                    .getJWTClaimsSet().getStringClaim("nonce"));
+        } finally {
+            org.springframework.test.util.ReflectionTestUtils.setField(credentialRequestServiceImpl, "finalIssuers", "");
         }
     }
 

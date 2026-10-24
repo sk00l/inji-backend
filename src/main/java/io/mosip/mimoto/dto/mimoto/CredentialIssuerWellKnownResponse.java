@@ -19,6 +19,17 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CredentialIssuerWellKnownResponse {
+    @JsonProperty("nonce_endpoint")
+    @URL
+    private String nonceEndpoint;
+
+    public CredentialIssuerWellKnownResponse(String issuer, List<String> servers, String endpoint,
+                                             Map<String, CredentialsSupportedResponse> configurations) {
+        this.credentialIssuer = issuer;
+        this.authorizationServers = servers;
+        this.credentialEndPoint = endpoint;
+        this.credentialConfigurationsSupported = configurations;
+    }
     @NotBlank
     @URL
     @SerializedName("credential_issuer")

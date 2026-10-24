@@ -70,7 +70,39 @@ public class CredentialMatchingServiceTest {
         walletCredentials = createMockWalletCredentials();
     }
 
-   // @Test
+    @Test
+    public void issuerPatternMatchesTheTrustedUniversityButNotALookalike() throws Exception {
+        Fields issuerField = new Fields(List.of("$.issuer"), null, null, null,
+                new Filter("string", "^did:web:university[.]localhost$"), null);
+        Constraints constraints = new Constraints(List.of(issuerField), null);
+        PresentationDefinition definition = new PresentationDefinition("university", List.of(
+                new InputDescriptor("student-id", null, null, null, constraints)), null, null, null);
+        var trusted = createMockWalletCredentialsWithMapData().getFirst();
+        var lookalike = createMockWalletCredentialsWithMapData().getFirst();
+        lookalike.setId("lookalike-credential");
+        ((Map<String, Object>) trusted.getCredential().getCredential()).put("issuer", "did:web:university.localhost");
+        ((Map<String, Object>) lookalike.getCredential().getCredential()).put("issuer", "did:web:university.localhost.evil.example");
+        when(openID4VPService.resolvePresentationDefinition(any(), any(), anyBoolean())).thenReturn(definition);
+        when(walletCredentialService.getDecryptedCredentials(eq(walletId), any())).thenReturn(List.of(trusted, lookalike));
+        when(issuersService.getIssuerConfig(anyString(), anyString())).thenReturn(createMockIssuerConfig());
+        var result = credentialMatchingService.getMatchingCredentials(sessionData, walletId, base64Key);
+        assertEquals(1, result.getMatchingCredentialsResponse().getAvailableCredentials().size());
+        assertEquals(trusted.getId(), result.getMatchingCredentialsResponse().getAvailableCredentials().getFirst().getCredentialId());
+    }
+
+    @Test
+    public void invalidPatternDoesNotCrashCredentialMatching() throws Exception {
+        Fields field = new Fields(List.of("$.credentialSubject.name"), null, null, null,
+                new Filter("string", "["), null);
+        var definition = new PresentationDefinition("invalid-regex", List.of(new InputDescriptor(
+                "student-id", null, null, null, new Constraints(List.of(field), null))), null, null, null);
+        when(openID4VPService.resolvePresentationDefinition(any(), any(), anyBoolean())).thenReturn(definition);
+        when(walletCredentialService.getDecryptedCredentials(eq(walletId), any())).thenReturn(createMockWalletCredentialsWithMapData());
+        var result = credentialMatchingService.getMatchingCredentials(sessionData, walletId, base64Key);
+        assertTrue(result.getMatchingCredentialsResponse().getAvailableCredentials().isEmpty());
+    }
+
+    // @Test
     public void testGetMatchingCredentialsSuccess() throws Exception {
         // Arrange
         when(openID4VPService.resolvePresentationDefinition(any(), any(), anyBoolean()))

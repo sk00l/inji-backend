@@ -29,6 +29,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 @Service
@@ -269,7 +271,12 @@ public class CredentialMatchingServiceImpl implements CredentialMatchingService 
         }
 
         String matchValue = match.toString();
-        return matchValue.contains(filter.getPattern());
+        try {
+            return Pattern.compile(filter.getPattern()).matcher(matchValue).find();
+        } catch (PatternSyntaxException exception) {
+            log.warn("Invalid regular expression in presentation field filter");
+            return false;
+        }
 
     }
 

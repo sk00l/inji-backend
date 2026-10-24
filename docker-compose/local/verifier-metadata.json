@@ -1,0 +1,8 @@
+{
+  "client_name": "Local demo verifier",
+  "logo_uri": "https://inji.github.io/inji-config/logos/mosipid-logo.png",
+  "vp_formats": {
+    "ldp_vp": {"proof_type": ["JsonWebSignature2020"]},
+    "ldp_vc": {"proof_type": ["Ed25519Signature2020", "RsaSignature2018"]}
+  }
+}

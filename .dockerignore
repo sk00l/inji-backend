@@ -1,3 +1,9 @@
 # comment
 *-javadoc.jar
 *-sources.jar
+.git
+docker-compose/certs
+docker-compose/mobile-runtime
+docker-compose/local-output
+docker-compose/university/node_modules
+.venv
