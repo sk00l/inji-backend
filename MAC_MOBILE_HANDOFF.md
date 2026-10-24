@@ -4,6 +4,33 @@ This is the primary guide for a friend or an LLM working on the **native Inji
 Wallet app**. Use this guide instead of the older web-wallet startup guide.
 Run commands from this repository's root unless another directory is specified.
 
+## Start from the friend's existing mobile coding session
+
+Give [FRIEND_LLM_PROMPT.md](FRIEND_LLM_PROMPT.md) to the LLM **already working in
+the existing Inji Mobile app folder**. It should keep that mobile checkout and
+its session context, then clone only this backend into a separate sibling folder.
+The backend does not need to be inside the mobile project. For example:
+
+```text
+projects/
+  existing-mobile-app/  # Existing app/session; preserve its code and changes
+  inji-backend/         # Clone https://github.com/sk00l/inji-backend.git here
+```
+
+The work order is **backend first**: inspect and preserve the mobile working
+tree, set up the separate backend, generate local keys on the Mac, and pass
+backend checks before editing any mobile connection settings. Then adapt to the
+existing app's integration using local environment/debug configuration and small
+isolated adapters where needed. Do not replace the app's frontend or upgrade/reset
+its source to match the reference version in this guide.
+
+This guide covers the complete Docker development backend, local key generation,
+issuer/library fixtures, and steps to connect and test an existing native app.
+The scripts automate backend provisioning; they do not automatically modify or
+guarantee compatibility with every customized mobile app. The LLM must inspect
+and test the friend's actual version in sections 6–9. A healthy backend alone is
+not a completed frontend integration.
+
 ## 1. What transfers through Git, and what does not
 
 A clone reproduces the **source, configuration templates, fictional student
@@ -139,6 +166,22 @@ and keys are preserved. The gateway certificate includes the selected IP as a
 subject alternative name. The build compiles Mimoto and runs focused Java tests.
 It does not clone or build Inji Web.
 
+**These are new keys generated on the destination Mac**, not copies of the
+original laptop's private keys. No manual key transfer is required:
+
+| Key material | Created locally by |
+| --- | --- |
+| `mobile-runtime/certs/oidckeystore.p12` | `init` → `setup-keystore.sh`; `setup-university.sh` adds the registered university client alias |
+| Development CA, TLS certificates, JVM truststore | `init` → local TLS/bootstrap scripts |
+| Mimoto operational root/base key material | Backend startup and KeyManager initialization, using the Mac's store/database |
+| University credential-signing key | Issuer first startup, persisted in its isolated named Docker volume |
+| Library request-signing key | Library first startup, persisted in its isolated named Docker volume |
+| Mobile holder/private wallet keys | The existing native app's own local setup/issuance flow |
+
+The runtime files and data volumes stay local and are not included in the Git
+clone. Subsequent starts reuse them. Never regenerate a store against an existing
+database simply to repeat the demonstration.
+
 If 8443 is already occupied, choose a port at initialization:
 
 ```bash
@@ -185,6 +228,13 @@ the university scenario. Some standard context resolution may still access the
 Internet; disconnected operation is not claimed.
 
 ## 6. Configure the already-running Inji Mobile project
+
+Start this section **after** section 5's backend `check`, `protocol-check`, and
+`tests` pass. Preserve the app's existing feature/UI code and current changes.
+Prefer local environment/debug trust settings for the connection, and adapt the
+backend where a compatible adapter is needed. Any unavoidable app integration
+change must be narrow and additive; do not overwrite an existing configuration
+file, reset the app, or replace the frontend to match this guide.
 
 Reference source inspected for this handoff: official `inji/inji-wallet` commit
 **`2b37c058a9ae10216e099dce78fbda57069d41ef`**. Inspect your friend's actual
